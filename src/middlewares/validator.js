@@ -6,7 +6,7 @@ export const validator = (req, res, next) => {
   const result = validationResult(req);
 
 
-  //si el resultado no esta vacio, es decir si hay errores
+  //si el resultado no esta vacio, es decir si  hay errores
   if (!result.isEmpty()) {
 
     //entonces deten y envia la respuesta con los errores 
