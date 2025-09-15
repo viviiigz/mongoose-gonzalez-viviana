@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const UserSchema = new Schema(
   {
@@ -20,6 +20,13 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false, //por defecto el usuario no esta eliminado
     },
+    // Relación de Muchos a Muchos con Role
+    roles: [
+      {
+        type: Types.ObjectId,
+        ref: "Role",
+      },
+    ],
   },
   {
     timestamps: true,

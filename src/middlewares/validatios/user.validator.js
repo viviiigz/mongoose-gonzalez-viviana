@@ -1,5 +1,8 @@
-import { body } from "express-validator";
+import { body} from "express-validator";
+import { Types } from "mongoose";
 import {UserModel} from "../../models/user.model.js";
+import { RoleModel } from "../../models/role.model.js";
+
 
 export const createUserValidator = [
   body("username")
@@ -28,12 +31,26 @@ export const createUserValidator = [
       }
       return true;
     }),
+    
   body("password")
     .notEmpty()
     .withMessage("La contraseña es obligatoria")
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener al menos 6 caracteres"),
-];
+
+  body("roleId")
+    .optional()
+    .custom(async (value) => {
+      if (!Types.ObjectId.isValid(value)) {
+        throw new Error("El ID del rol no es válido");
+      }
+      const role = await RoleModel.findById(value);
+      if (!role) {
+        throw new Error("El rol especificado no existe");
+      }
+      return true;
+    }),
+  ];
 
 export const updateUserValidator = [
   body("username")
@@ -48,6 +65,7 @@ export const updateUserValidator = [
       }
       return true;
     }),
+
   body("email")
     .optional()
     .isEmail()
@@ -63,4 +81,19 @@ export const updateUserValidator = [
     .optional()
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener al menos 6 caracteres"),
+
+      body("roleId")
+    .optional()
+    .custom(async (value) => {
+      // Esta validación se ejecuta solo si el campo es enviado
+      if (!Types.ObjectId.isValid(value)) {
+        throw new Error("El ID del rol no es válido");
+      }
+      const role = await RoleModel.findById(value);
+      if (!role) {
+        throw new Error("El rol especificado no existe");
+      }
+      return true;
+    }),
+
 ];
