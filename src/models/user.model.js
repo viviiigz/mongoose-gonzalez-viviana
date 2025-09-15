@@ -20,14 +20,14 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false, //por defecto el usuario no esta eliminado
     },
-    // Relación de Muchos a Muchos con Role
+    // Relación de Muchos a Muchos con Role referencia
     roles: [
       {
         type: Types.ObjectId,
         ref: "Role",
       },
     ],
-    // relacion con profile de 1 a 1
+    // relacion con profile de 1 a 1 embebido
     profile: {
       nombre: {
         type: String,

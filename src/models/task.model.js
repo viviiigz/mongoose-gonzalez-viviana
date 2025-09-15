@@ -16,7 +16,7 @@ const TaskSchema = new Schema(
       enum: ["To Do", "In Progress", "Done"], 
       default: "To Do",
     },
-    // una tarea pertenece a un solo usuario
+    // una tarea pertenece a un solo usuario redferencia
     assignedTo: {
       type: Types.ObjectId,
       ref: "User",

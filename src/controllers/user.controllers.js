@@ -129,7 +129,7 @@ export const addRoleToUser = async (req, res) => {
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
-      { $addToSet: { roles: roleId } },
+      { $addToSet: { roles: roleId } }, //addToSet evita duplicados
       { new: true }
     ).populate("roles");
 
