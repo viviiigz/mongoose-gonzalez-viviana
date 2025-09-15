@@ -1,27 +1,108 @@
 import { UserModel } from "../models/user.model.js";
+import { validationResult } from "express-validator";
+import { TaskModel } from "../models/task.model.js";
 
-export const createUser = async (req,res) => {
-    const { username, email, password} = req.body;
+export const getAllUser = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error al obtener los usuarios" });
+  }
+};
 
+export const getAllUsersWithTasks = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+
+    const usersWithTasks = await Promise.all(
+      users.map(async (user) => { //el map sirve para transformar un array en otro
+        const tasks = await TaskModel.find({ assignedTo: user._id });
+        return {
+          user: user,
+          tasks: tasks,
+        };
+      })
+    );
+
+    res.status(200).json(usersWithTasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error al obtener usuarios y sus tareas" });
+  }
+};
+
+export const getUserById = async (req, res) => {
     try {
-        const newUser = await UserModel.create({
-            username,
-            email,
-            password
-            });
-
-            res.status(201).json({
-                ok: true,
-                msg: "Usuario creado correctamente",
-                data: newUser,
-            });
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: "Error inesperado, no se pudo crear el usuario"
-        });
-        
+    const user = await UserModel.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
     }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error al obtener el usuario" });
+  }
+};
+export const createUser = async (req, res) => {
+  // errores del middleware de validacion
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+
+    const newUser = await UserModel.create(req.body);
+    res.status(201).json({
+        msg: "Usuario creado correctamente", 
+        user: newUser});
+
+  } catch (error) {
+
+    console.error(error);
+    res.status(500).json({ msg: "Error al crear el usuario" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    if (!user) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+    
+    res.status(200).json({
+        msg: "Usuario actualizado correctamente",
+        user: user  
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error al actualizar el usuario" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+    
+    //aca va la eliminacion en cascada uso el id del usuario eliminado para encontrar y borrar sus hijos
+    await TaskModel.deleteMany({ assignedTo: user._id });
+
+    res.status(200).json({ msg: "Usuario y sus tareas eliminados correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error al eliminar el usuario" });
+  }
 };

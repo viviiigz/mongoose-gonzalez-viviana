@@ -1,4 +1,4 @@
-import { model, Schema} from "mongoose";
+import { model, Schema } from "mongoose";
 
 const UserSchema = new Schema(
   {
@@ -16,7 +16,18 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false, //por defecto el usuario no esta eliminado
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false, // evita el campo '__v' en los documentos
   }
 );
 
 export const UserModel = model("User", UserSchema);
+//relacion con roles de n a m pq un usuario puede tener carios roles y un rol puede tener varios usuarios
+//relacion con tasks de 1 a n pq un usuario puede tener varias tareas pero una tarea solo puede tener un usuario
+//relacion con profiles de 1 a 1 pq un usuario solo puede tener un perfil y un perfil solo puede tener un usuario
