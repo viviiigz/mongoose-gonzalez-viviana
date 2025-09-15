@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 
-//revisamos la solicitud
+//revisamos la  solicitud
 export const validator = (req, res, next) => {
     //dame el resultado de la validacion
   const result = validationResult(req);
