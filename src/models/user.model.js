@@ -27,6 +27,25 @@ const UserSchema = new Schema(
         ref: "Role",
       },
     ],
+    // relacion con profile de 1 a 1
+    profile: {
+      nombre: {
+        type: String,
+        trim: true,
+      },
+      apellido: {
+        type: String,
+        trim: true,
+      },
+      bio: {
+        type: String,
+        trim: true,
+      },
+      phone: {
+        type: String,
+        trim: true,
+      },
+    },
   },
   {
     timestamps: true,

@@ -20,6 +20,10 @@ import {
   removeRoleFromUser,
 } from "../controllers/user.controllers.js";
 
+import { profileValidator } from "../middlewares/validatios/profile.validator.js";
+import { createOrUpdateProfile, getProfile } from "../controllers/user.controllers.js";
+
+
 export const userRoutes = Router();
 
 // ruta para crear un usuario
@@ -51,4 +55,18 @@ userRoutes.delete(
   removeRoleFromUserValidator,
   validator,
   removeRoleFromUser
+);
+
+//ritas de perfil 
+// Rutas de perfil
+userRoutes.post(
+  "/users/:userId/profile",
+  profileValidator,
+  validator,
+  createOrUpdateProfile
+);
+
+userRoutes.get(
+  "/users/:userId/profile",
+  getProfile
 );
